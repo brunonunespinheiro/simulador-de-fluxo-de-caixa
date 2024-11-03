@@ -1,6 +1,7 @@
 const transactions = [];
+let pieChart;
 
-// Função para adicionar transação e atualizar o gráfico e lista
+// Função para adicionar transação manual e atualizar o dashboard
 document.getElementById('transaction-form').addEventListener('submit', function(e) {
   e.preventDefault();
   
@@ -12,13 +13,11 @@ document.getElementById('transaction-form').addEventListener('submit', function(
   };
 
   transactions.push(transaction);
-
-  updateChart();
-  updateTransactionList();
-  clearForm(); // Limpa os campos após adicionar a transação
+  updateDashboard();
+  clearForm();
 });
 
-// Função para limpar o formulário
+// Função para limpar o formulário após adicionar transação
 function clearForm() {
   document.getElementById('type').value = 'Receita';
   document.getElementById('name').value = '';
@@ -26,28 +25,21 @@ function clearForm() {
   document.getElementById('date').value = '';
 }
 
-// Função para atualizar o gráfico
-function updateChart() {
-  const totalReceitas = transactions.filter(t => t.type === 'Receita').reduce((acc, t) => acc + t.value, 0);
-  const totalDespesas = transactions.filter(t => t.type === 'Despesa').reduce((acc, t) => acc + t.value, 0);
+// Função para atualizar o dashboard com valores e gráficos
+function updateDashboard() {
+  const totalReceitas = transactions.filter(t => t.type.toLowerCase() === 'receita').reduce((acc, t) => acc + t.value, 0);
+  const totalDespesas = transactions.filter(t => t.type.toLowerCase() === 'despesa').reduce((acc, t) => acc + t.value, 0);
+  const currentBalance = totalReceitas - totalDespesas;
 
-  const ctx = document.getElementById('chart').getContext('2d');
-  if (window.myChart) window.myChart.destroy();
+  document.getElementById('current-balance').textContent = currentBalance.toFixed(2);
+  document.getElementById('total-receitas').textContent = totalReceitas.toFixed(2);
+  document.getElementById('total-despesas').textContent = totalDespesas.toFixed(2);
 
-  window.myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Receitas', 'Despesas'],
-      datasets: [{
-        label: 'R$',
-        data: [totalReceitas, totalDespesas],
-        backgroundColor: ['#4CAF50', '#FF5733']
-      }]
-    }
-  });
+  updateTransactionList();
+  updatePieChart(totalReceitas, totalDespesas, currentBalance);
 }
 
-// Função para atualizar a lista de transações
+// Função para exibir a lista de transações no dashboard
 function updateTransactionList() {
   const transactionList = document.getElementById('transaction-list');
   transactionList.innerHTML = transactions.map(t => `
@@ -60,22 +52,29 @@ function updateTransactionList() {
   `).join('');
 }
 
-// Função para gerar PDF
-document.getElementById('generate-pdf').addEventListener('click', function() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  pdf.text('Relatório de Fluxo de Caixa', 10, 10);
-  pdf.text(`Receitas: R$${transactions.filter(t => t.type === 'Receita').reduce((acc, t) => acc + t.value, 0).toFixed(2)}`, 10, 20);
-  pdf.text(`Despesas: R$${transactions.filter(t => t.type === 'Despesa').reduce((acc, t) => acc + t.value, 0).toFixed(2)}`, 10, 30);
-
-  let startY = 40;
-  transactions.forEach((t, index) => {
-    const entry = `${t.type}: ${t.name} - R$${t.value.toFixed(2)} em ${new Date(t.date).toLocaleDateString('pt-BR')}`;
-    pdf.text(entry, 10, startY + (index * 10));
-  });
-
-  pdf.addImage(document.getElementById('chart').toDataURL('image/png'), 'PNG', 10, startY + transactions.length * 10 + 20, 180, 60);
+// Função para atualizar o gráfico de pizza
+function updatePieChart(totalReceitas, totalDespesas, currentBalance) {
+  const ctx = document.getElementById('pie-chart').getContext('2d');
   
-  pdf.save('fluxo_caixa.pdf');
-});
+  // Se o gráfico já existe, destrua-o antes de recriar para evitar sobreposição
+  if (pieChart) pieChart.destroy();
+
+  pieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Receitas', 'Despesas', 'Saldo Atual'],
+      datasets: [{
+        data: [totalReceitas, totalDespesas, currentBalance],
+        backgroundColor: ['#4CAF50', '#FF5733', '#FFD700'],
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+      }
+    }
+  });
+}
