@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Simulador de Fluxo de Caixa</h1>
+    <h1>Simulador de Fluxo de Caixa by Bruno Nunes Pinheiro</h1>
     
     <!-- Formulário de Inserção de Transações -->
     <form id="transaction-form">
@@ -52,12 +52,22 @@
           <p>R$ <span id="total-despesas">0.00</span></p>
         </div>
       </div>
-      
-      <!-- Gráfico de Pizza para Receitas, Despesas e Saldo -->
-      <div class="chart-container">
-        <canvas id="pie-chart"></canvas>
+
+      <!-- Gráficos de Pizza Lado a Lado -->
+      <div class="charts-row">
+        <div class="chart-container">
+          <h3>Distribuição do Saldo Atual</h3>
+          <canvas id="balance-pie-chart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Receitas vs Despesas</h3>
+          <canvas id="income-expense-pie-chart"></canvas>
+        </div>
       </div>
     </div>
+
+    <!-- Botão para gerar PDF -->
+    <button id="generate-pdf">Gerar PDF</button>
 
     <!-- Tabela de Transações -->
     <h2>Lista de Transações</h2>
@@ -74,12 +84,8 @@
     </table>
   </div>
 
-  <!-- Rodapé com Autoria -->
-  <footer>
-    Feito por <a href="https://github.com/brunonunespinheiro" target="_blank">@brunonunespinheiro</a>
-  </footer>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
