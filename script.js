@@ -1,5 +1,6 @@
 const transactions = [];
-let pieChart;
+let balancePieChart;
+let incomeExpensePieChart;
 
 // Função para adicionar transação manual e atualizar o dashboard
 document.getElementById('transaction-form').addEventListener('submit', function(e) {
@@ -36,7 +37,8 @@ function updateDashboard() {
   document.getElementById('total-despesas').textContent = totalDespesas.toFixed(2);
 
   updateTransactionList();
-  updatePieChart(totalReceitas, totalDespesas, currentBalance);
+  updateBalancePieChart(currentBalance, totalDespesas);
+  updateIncomeExpensePieChart(totalReceitas, totalDespesas);
 }
 
 // Função para exibir a lista de transações no dashboard
@@ -52,20 +54,19 @@ function updateTransactionList() {
   `).join('');
 }
 
-// Função para atualizar o gráfico de pizza
-function updatePieChart(totalReceitas, totalDespesas, currentBalance) {
-  const ctx = document.getElementById('pie-chart').getContext('2d');
+// Função para atualizar o gráfico de pizza do Saldo Atual
+function updateBalancePieChart(saldoDisponivel, despesasTotais) {
+  const ctx = document.getElementById('balance-pie-chart').getContext('2d');
   
-  // Se o gráfico já existe, destrua-o antes de recriar para evitar sobreposição
-  if (pieChart) pieChart.destroy();
+  if (balancePieChart) balancePieChart.destroy();
 
-  pieChart = new Chart(ctx, {
+  balancePieChart = new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['Receitas', 'Despesas', 'Saldo Atual'],
+      labels: ['Saldo Disponível', 'Despesas Totais'],
       datasets: [{
-        data: [totalReceitas, totalDespesas, currentBalance],
-        backgroundColor: ['#4CAF50', '#FF5733', '#FFD700'],
+        data: [saldoDisponivel, despesasTotais],
+        backgroundColor: ['#4CAF50', '#FF5733'],
       }]
     },
     options: {
@@ -74,7 +75,78 @@ function updatePieChart(totalReceitas, totalDespesas, currentBalance) {
         legend: {
           position: 'top',
         },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              return `${label}: R$ ${value.toFixed(2)}`;
+            }
+          }
+        }
       }
     }
   });
 }
+
+// Função para atualizar o gráfico de pizza de Receitas vs Despesas
+function updateIncomeExpensePieChart(totalReceitas, totalDespesas) {
+  const ctx = document.getElementById('income-expense-pie-chart').getContext('2d');
+  
+  if (incomeExpensePieChart) incomeExpensePieChart.destroy();
+
+  incomeExpensePieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Receitas Totais', 'Despesas Totais'],
+      datasets: [{
+        data: [totalReceitas, totalDespesas],
+        backgroundColor: ['#4CAF50', '#FF5733'],
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              return `${label}: R$ ${value.toFixed(2)}`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// Função para gerar o PDF
+document.getElementById('generate-pdf').addEventListener('click', async function() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  // Títulos e valores do dashboard
+  pdf.setFontSize(16);
+  pdf.text('Simulador de Fluxo de Caixa', 10, 10);
+  pdf.setFontSize(12);
+  pdf.text(`Saldo Atual: R$ ${document.getElementById('current-balance').textContent}`, 10, 20);
+  pdf.text(`Total de Receitas: R$ ${document.getElementById('total-receitas').textContent}`, 10, 30);
+  pdf.text(`Total de Despesas: R$ ${document.getElementById('total-despesas').textContent}`, 10, 40);
+
+  // Gráfico de Saldo Atual
+  const balanceCanvas = document.getElementById('balance-pie-chart');
+  const balanceImgData = balanceCanvas.toDataURL('image/png');
+  pdf.addImage(balanceImgData, 'PNG', 10, 50, 80, 80);
+
+  // Gráfico de Receitas vs Despesas
+  const incomeExpenseCanvas = document.getElementById('income-expense-pie-chart');
+  const incomeExpenseImgData = incomeExpenseCanvas.toDataURL('image/png');
+  pdf.addImage(incomeExpenseImgData, 'PNG', 110, 50, 80, 80);
+
+  // Salvar PDF
+  pdf.save('simulador_fluxo_caixa.pdf');
+});
