@@ -10,6 +10,8 @@
 <body>
   <div class="container">
     <h1>Simulador de Fluxo de Caixa</h1>
+    
+    <!-- Formulário de Inserção de Transações -->
     <form id="transaction-form">
       <div class="form-group">
         <label>Tipo:</label>
@@ -33,6 +35,31 @@
       <button type="submit">Adicionar</button>
     </form>
 
+    <!-- Dashboard com Saldo Atual, Total de Receitas e Total de Despesas -->
+    <div class="dashboard">
+      <h2>Dashboard Financeiro</h2>
+      <div class="dashboard-info">
+        <div class="dashboard-item">
+          <h3>Saldo Atual</h3>
+          <p>R$ <span id="current-balance">0.00</span></p>
+        </div>
+        <div class="dashboard-item">
+          <h3>Total de Receitas</h3>
+          <p>R$ <span id="total-receitas">0.00</span></p>
+        </div>
+        <div class="dashboard-item">
+          <h3>Total de Despesas</h3>
+          <p>R$ <span id="total-despesas">0.00</span></p>
+        </div>
+      </div>
+      
+      <!-- Gráfico de Pizza para Receitas, Despesas e Saldo -->
+      <div class="chart-container">
+        <canvas id="pie-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabela de Transações -->
     <h2>Lista de Transações</h2>
     <table>
       <thead>
@@ -45,16 +72,9 @@
       </thead>
       <tbody id="transaction-list"></tbody>
     </table>
-
-    <div class="chart-container">
-      <canvas id="chart"></canvas>
-    </div>
-
-    <button id="generate-pdf">Gerar PDF</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
