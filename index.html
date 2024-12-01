@@ -5,7 +5,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador de Fluxo de Caixa</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dracula/bootstrap/dist/dracula.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #282a36; /* Dracula Background */
+      color: #f8f8f2; /* Dracula Foreground */
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1, h2, h3 {
+      color: #bd93f9; /* Dracula Primary Color */
+      text-align: center;
+    }
+
+    form {
+      background-color: #44475a; /* Dracula Form Background */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    select, input {
+      background-color: #6272a4; /* Dracula Input Background */
+      color: #f8f8f2;
+    }
+
+    button {
+      background-color: #bd93f9; /* Dracula Button Background */
+      color: #282a36;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff79c6; /* Dracula Highlight */
+    }
+
+    .dashboard {
+      background-color: #44475a; /* Dracula Dashboard Background */
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-item {
+      flex: 1;
+      background-color: #6272a4; /* Dracula Dashboard Item Background */
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .charts-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .chart-container {
+      background-color: #6272a4; /* Dracula Chart Background */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #44475a; /* Dracula Table Background */
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table thead {
+      background-color: #6272a4; /* Dracula Table Header */
+    }
+
+    table thead th {
+      color: #f8f8f2;
+      padding: 10px;
+      text-align: left;
+    }
+
+    table tbody tr {
+      border-bottom: 1px solid #bd93f9;
+    }
+
+    table tbody td {
+      padding: 10px;
+      color: #f8f8f2;
+    }
+
+    #generate-pdf {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      background-color: #bd93f9; /* Dracula Button */
+      color: #282a36;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #generate-pdf:hover {
+      background-color: #ff79c6;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
